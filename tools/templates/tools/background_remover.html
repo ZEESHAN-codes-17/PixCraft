@@ -1,0 +1,259 @@
+{% extends 'tools/base.html' %}
+
+{% block title %}Background Remover - Pixcraft{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="text-center mb-4">
+            <h1 class="display-5"><i class="fas fa-magic"></i> Background Remover</h1>
+            <p class="lead text-muted">Remove image backgrounds instantly - 100% FREE!</p>
+            <div class="badge bg-success fs-6">No Premium Required 💎</div>
+        </div>
+
+        <div class="card shadow-lg">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="fas fa-eraser"></i> Remove Background</h4>
+            </div>
+
+            <div class="card-body">
+                <div class="alert alert-success">
+                    <i class="fas fa-gift"></i> <strong>FREE Premium Feature!</strong> Remove backgrounds from any image - no watermarks, no limits!
+                </div>
+
+                <form id="bgRemoverForm" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="mb-4">
+                        <label for="imageInput" class="form-label fw-bold">Upload Image</label>
+                        <input type="file" class="form-control form-control-lg" id="imageInput" name="image" accept="image/*" required>
+                        <small class="text-muted">Supported: PNG, JPG, WEBP | Max size: 10MB</small>
+                    </div>
+
+                    <div id="imagePreview" class="mb-4" style="display: none;">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p class="text-center fw-bold">Original:</p>
+                                <div class="border rounded p-2 bg-light">
+                                    <img id="originalImg" class="img-fluid rounded" style="max-height: 300px; width: 100%; object-fit: contain;">
+                                </div>
+                            </div>
+                            <div class="col-md-6" id="resultPreview" style="display: none;">
+                                <p class="text-center fw-bold">Background Removed:</p>
+                                <div class="border rounded p-2" style="background: 
+                                    repeating-conic-gradient(#ddd 0% 25%, white 0% 50%) 
+                                    50% / 20px 20px;">
+                                    <img id="resultImg" class="img-fluid rounded" style="max-height: 300px; width: 100%; object-fit: contain;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg w-100">
+                        <i class="fas fa-magic"></i> Remove Background
+                    </button>
+                </form>
+
+                <!-- Loading -->
+                <div id="loading" class="text-center mt-4" style="display: none;">
+                    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                        <span class="visually-hidden">Processing...</span>
+                    </div>
+                    <p class="mt-3 fw-bold">Removing background...</p>
+                    <p class="text-muted">This may take 5-10 seconds</p>
+                </div>
+
+                <!-- Result -->
+                <div id="result" class="mt-4" style="display: none;">
+                    <div class="alert alert-success">
+                        <h5><i class="fas fa-check-circle"></i> Background Removed Successfully!</h5>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button id="downloadBtn" class="btn btn-success btn-lg">
+                            <i class="fas fa-download"></i> Download PNG (Transparent)
+                        </button>
+                        <button id="removeAnotherBtn" class="btn btn-outline-secondary">
+                            <i class="fas fa-redo"></i> Remove Another Background
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Error -->
+                <div id="error" class="alert alert-danger mt-4" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- Features Info -->
+        <div class="row mt-5 g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-success">
+                    <div class="card-body text-center">
+                        <i class="fas fa-dollar-sign fa-3x text-success mb-3"></i>
+                        <h5 class="card-title">100% FREE</h5>
+                        <p class="card-text">No premium subscriptions required. Remove unlimited backgrounds!</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-primary">
+                    <div class="card-body text-center">
+                        <i class="fas fa-robot fa-3x text-primary mb-3"></i>
+                        <h5 class="card-title">AI-Powered</h5>
+                        <p class="card-text">Advanced AI automatically detects and removes backgrounds</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-warning">
+                    <div class="card-body text-center">
+                        <i class="fas fa-image fa-3x text-warning mb-3"></i>
+                        <h5 class="card-title">PNG Output</h5>
+                        <p class="card-text">Get transparent PNG images perfect for design work</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Use Cases -->
+        <div class="card mt-4">
+            <div class="card-header bg-light">
+                <h5 class="mb-0"><i class="fas fa-lightbulb"></i> Perfect For:</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul class="list-unstyled">
+                            <li class="mb-2">✅ Product photos for e-commerce</li>
+                            <li class="mb-2">✅ Profile pictures</li>
+                            <li class="mb-2">✅ Graphic design projects</li>
+                            <li class="mb-2">✅ Presentations & documents</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="list-unstyled">
+                            <li class="mb-2">✅ Social media posts</li>
+                            <li class="mb-2">✅ Website images</li>
+                            <li class="mb-2">✅ Marketing materials</li>
+                            <li class="mb-2">✅ ID photos</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let processedImageBlob = null;
+
+// Image preview
+document.getElementById('imageInput').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        // Check file size (10MB)
+        if (file.size > 10 * 1024 * 1024) {
+            alert('Image size must be less than 10MB');
+            this.value = '';
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('originalImg').src = e.target.result;
+            document.getElementById('imagePreview').style.display = 'block';
+            document.getElementById('resultPreview').style.display = 'none';
+            document.getElementById('result').style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// Form submission
+document.getElementById('bgRemoverForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const loading = document.getElementById('loading');
+    const error = document.getElementById('error');
+    const result = document.getElementById('result');
+    
+    // Hide previous results
+    error.style.display = 'none';
+    result.style.display = 'none';
+    
+    // Show loading
+    loading.style.display = 'block';
+    
+    // Disable submit button
+    const submitBtn = this.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    
+    fetch('{% url "tools:background_remover" %}', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(data => {
+                throw new Error(data.error || 'Background removal failed');
+            });
+        }
+        return response.blob();
+    })
+    .then(blob => {
+        loading.style.display = 'none';
+        submitBtn.disabled = false;
+        
+        // Store blob for download
+        processedImageBlob = blob;
+        
+        // Show result preview
+        const url = URL.createObjectURL(blob);
+        document.getElementById('resultImg').src = url;
+        document.getElementById('resultPreview').style.display = 'block';
+        result.style.display = 'block';
+    })
+    .catch(err => {
+        loading.style.display = 'none';
+        submitBtn.disabled = false;
+        error.textContent = 'Error: ' + err.message;
+        error.style.display = 'block';
+    });
+});
+
+// Download button
+document.getElementById('downloadBtn').addEventListener('click', function() {
+    if (processedImageBlob) {
+        const url = URL.createObjectURL(processedImageBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'no_background.png';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+});
+
+// Remove another
+document.getElementById('removeAnotherBtn').addEventListener('click', function() {
+    document.getElementById('bgRemoverForm').reset();
+    document.getElementById('imagePreview').style.display = 'none';
+    document.getElementById('result').style.display = 'none';
+    processedImageBlob = null;
+});
+</script>
+
+<style>
+.card {
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* Checkerboard pattern for transparency preview */
+</style>
+{% endblock %}

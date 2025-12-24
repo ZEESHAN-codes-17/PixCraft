@@ -1,0 +1,165 @@
+{% extends 'tools/base.html' %}
+
+{% block title %}ID Photo Resizer - PixCraft{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-lg">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">
+                    <i class="fas fa-id-card"></i> ID Photo Resizer
+                </h3>
+            </div>
+            <div class="card-body">
+                <form id="idPhotoForm" method="POST" enctype="multipart/form-data" class="needs-validation">
+                    {% csrf_token %}
+                    
+                    <div class="mb-4">
+                        <label for="photoImage" class="form-label fw-bold">Upload Your Photo</label>
+                        <input 
+                            type="file" 
+                            class="form-control" 
+                            id="photoImage" 
+                            name="image" 
+                            accept="image/*"
+                            required
+                        >
+                        <small class="text-muted d-block mt-2">Upload a clear photo of your face or ID</small>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="sizeOption" class="form-label fw-bold">Select Photo Size</label>
+                        <select class="form-select" id="sizeOption" name="size_option" required>
+                            <optgroup label="Standard Sizes">
+                                <option value="2x2">2x2 inches (Square)</option>
+                                <option value="1x1">1x1 inches (Square)</option>
+                                <option value="4x6">4x6 inches</option>
+                            </optgroup>
+                            <optgroup label="Passport Sizes">
+                                <option value="passport_india">Pakistani Passport</option>
+                                <option value="passport_us">US Passport</option>
+                                <option value="visa_schengen">Schengen Visa</option>
+                            </optgroup>
+                            <optgroup label="Other">
+                                <option value="driving_license">Driving License</option>
+                            </optgroup>
+                        </select>
+                        <small class="text-muted d-block mt-2">Choose the required photo size</small>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg w-100">
+                        <i class="fas fa-magic"></i> Resize Photo
+                    </button>
+                </form>
+
+                <div id="loadingSpinner" class="text-center mt-4" style="display: none;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Resizing your photo...</p>
+                </div>
+
+                <div id="successMessage" class="alert alert-success alert-dismissible fade show mt-4" role="alert" style="display: none;">
+                    <i class="fas fa-check-circle"></i> <strong>Success!</strong> Your photo has been resized!
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <div id="downloadSection" style="display: none;" class="mt-4 text-center">
+                    <a id="downloadBtn" href="#" class="btn btn-success btn-lg" download="id_photo.png">
+                        <i class="fas fa-download"></i> Download Photo
+                    </a>
+                    <button type="button" class="btn btn-secondary btn-lg ms-2" onclick="location.reload()">
+                        <i class="fas fa-redo"></i> Resize Another
+                    </button>
+                </div>
+
+                <div id="errorAlert" class="alert alert-danger alert-dismissible fade show mt-4" role="alert" style="display: none;">
+                    <strong>Error:</strong> <span id="errorMessage"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <div class="mt-5 p-4 bg-light rounded">
+                    <h5 class="mb-3"><i class="fas fa-info-circle text-info"></i> Photo Sizes Reference:</h5>
+                    <table class="table table-sm mb-0">
+                        <tbody>
+                            <tr>
+                                <td><strong>2x2 inches</strong></td>
+                                <td>Square format, commonly used</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Pakistani Passport</strong></td>
+                                <td>3.5 x 4.5 cm standard size</td>
+                            </tr>
+                            <tr>
+                                <td><strong>US Passport</strong></td>
+                                <td>2x2 inches square format</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Schengen Visa</strong></td>
+                                <td>6x7 cm standard size</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Driving License</strong></td>
+                                <td>3.5 x 2.5 inches format</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('idPhotoForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const photoImage = document.getElementById('photoImage').files[0];
+    
+    if (!photoImage) {
+        showError('Please upload a photo');
+        return;
+    }
+    
+    document.getElementById('loadingSpinner').style.display = 'block';
+    document.getElementById('successMessage').style.display = 'none';
+    document.getElementById('errorAlert').style.display = 'none';
+    document.getElementById('downloadSection').style.display = 'none';
+    
+    const formData = new FormData(this);
+    
+    fetch('{% url "tools:id_photo_resizer" %}', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(data => {
+                throw new Error(data.error || 'Resizing failed');
+            });
+        }
+        return response.blob();
+    })
+    .then(blob => {
+        const url = URL.createObjectURL(blob);
+        document.getElementById('downloadBtn').href = url;
+        
+        document.getElementById('loadingSpinner').style.display = 'none';
+        document.getElementById('successMessage').style.display = 'block';
+        document.getElementById('downloadSection').style.display = 'block';
+        
+        showToast('Photo resized successfully!', 'success');
+    })
+    .catch(error => {
+        document.getElementById('loadingSpinner').style.display = 'none';
+        showError(error.message || 'An error occurred');
+    });
+});
+
+function showError(message) {
+    document.getElementById('errorMessage').textContent = message;
+    document.getElementById('errorAlert').style.display = 'block';
+}
+</script>
+{% endblock %}

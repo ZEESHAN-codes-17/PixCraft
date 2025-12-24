@@ -1,0 +1,100 @@
+<!-- tools/templates/tools/qr_generator.html -->
+<!-- ============================================ -->
+{% extends 'tools/base.html' %}
+
+{% block title %}QR Code Generator - Pixcraft{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow">
+            <div class="card-header bg-warning text-dark">
+                <h3 class="mb-0"><i class="fas fa-qrcode"></i> QR Code Generator</h3>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">Create a custom QR code for any text or URL</p>
+                
+                <form id="qrForm" method="post" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label for="dataInput" class="form-label">Enter Text or URL</label>
+                        <textarea class="form-control" id="dataInput" name="data" rows="3" placeholder="https://example.com or any text" required></textarea>
+                        <div class="invalid-feedback">Please enter some text or URL.</div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="sizeRange" class="form-label">Size: <span id="sizeValue">300</span>px</label>
+                        <input type="range" class="form-range" id="sizeRange" name="size" min="100" max="800" value="300" step="50">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-warning btn-lg w-100">
+                        <i class="fas fa-qrcode"></i> Generate QR Code
+                    </button>
+                </form>
+                
+                <div id="loading" class="text-center mt-3" style="display: none;">
+                    <div class="spinner-border text-warning" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Generating...</p>
+                </div>
+                
+                <div id="preview" class="mt-4 text-center" style="display: none;">
+                    <img id="qrPreview" class="img-fluid rounded shadow" style="max-width: 400px;">
+                </div>
+                
+                <div id="error" class="alert alert-danger mt-3" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('sizeRange').addEventListener('input', function(e) {
+    document.getElementById('sizeValue').textContent = e.target.value;
+});
+
+document.getElementById('qrForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const form = e.target;
+    if (!form.checkValidity()) {
+        form.classList.add('was-validated');
+        return;
+    }
+    
+    const formData = new FormData(form);
+    document.getElementById('loading').style.display = 'block';
+    document.getElementById('error').style.display = 'none';
+    document.getElementById('preview').style.display = 'none';
+    
+    fetch('{% url "tools:qr_generator" %}', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('Generation failed');
+        return response.blob();
+    })
+    .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        document.getElementById('qrPreview').src = url;
+        document.getElementById('preview').style.display = 'block';
+        document.getElementById('loading').style.display = 'none';
+        
+        // Add download functionality
+        document.getElementById('qrPreview').onclick = function() {
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'qrcode.png';
+            a.click();
+        };
+    })
+    .catch(error => {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('error').textContent = 'Error: ' + error.message;
+        document.getElementById('error').style.display = 'block';
+    });
+});
+</script>
+{% endblock %}

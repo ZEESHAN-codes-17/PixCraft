@@ -1,0 +1,60 @@
+{% extends 'tools/base.html' %}
+
+{% block title %}View Shared Image - Pixcraft{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-lg">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="fas fa-image"></i> Shared Image</h4>
+            </div>
+
+            <div class="card-body text-center">
+                <!-- Image -->
+                <div class="mb-4">
+                    <img src="{{ image_link.image.url }}" class="img-fluid rounded shadow" style="max-width: 100%; max-height: 600px;" alt="{{ image_link.original_filename }}">
+                </div>
+
+                <!-- Image Info -->
+                <div class="alert alert-info">
+                    <p class="mb-2"><strong>Filename:</strong> {{ image_link.original_filename }}</p>
+                    <p class="mb-2"><strong>Views:</strong> {{ image_link.view_count }}</p>
+                    <p class="mb-0">
+                        <strong>Expires:</strong> 
+                        <span class="text-danger">{{ image_link.expires_at|date:"F d, Y H:i" }}</span>
+                    </p>
+                </div>
+
+                <!-- Download Button -->
+                <a href="{{ image_link.image.url }}" download="{{ image_link.original_filename }}" class="btn btn-success btn-lg">
+                    <i class="fas fa-download"></i> Download Image
+                </a>
+
+                <!-- Time Remaining -->
+                <div class="mt-4">
+                    <small class="text-muted">
+                        <i class="fas fa-clock"></i> 
+                        This link will expire in 
+                        {% if time_remaining.days > 0 %}
+                            {{ time_remaining.days }} day{{ time_remaining.days|pluralize }}
+                        {% elif time_remaining.seconds > 3600 %}
+                            {{ time_remaining.seconds|floatformat:0|add:"3600"|divisibleby:"3600" }} hour{{ time_remaining.seconds|floatformat:0|add:"3600"|divisibleby:"3600"|pluralize }}
+                        {% else %}
+                            less than 1 hour
+                        {% endif %}
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create Your Own Link -->
+        <div class="text-center mt-4">
+            <p class="text-muted">Want to share your own images?</p>
+            <a href="{% url 'tools:image_link_generator' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Create Your Own Link
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

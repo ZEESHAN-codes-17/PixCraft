@@ -1,0 +1,247 @@
+{% extends 'tools/base.html' %}
+
+{% block title %}Image Link Generator - Pixcraft{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="text-center mb-4">
+            <h1 class="display-5"><i class="fas fa-link"></i> Image Link Generator</h1>
+            <p class="lead text-muted">Create temporary shareable links for your images</p>
+        </div>
+
+        <div class="card shadow-lg">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="fas fa-upload"></i> Upload Image</h4>
+            </div>
+
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> <strong>How it works:</strong> Upload an image, choose expiration time, and get a shareable link!
+                </div>
+
+                <form id="linkGeneratorForm" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="mb-4">
+                        <label for="imageInput" class="form-label fw-bold">Select Image</label>
+                        <input type="file" class="form-control form-control-lg" id="imageInput" name="image" accept="image/*" required>
+                        <small class="text-muted">Max size: 5MB | Formats: PNG, JPG, GIF, WEBP</small>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="expiryDuration" class="form-label fw-bold">Link Expires In</label>
+                        <select class="form-select form-select-lg" id="expiryDuration" name="expiry_duration" required>
+                            <option value="1h">1 Hour ⏰</option>
+                            <option value="1d" selected>1 Day 📅</option>
+                            <option value="7d">7 Days 📆</option>
+                            <option value="1m">1 Month 🗓️</option>
+                        </select>
+                    </div>
+
+                    <div id="imagePreview" class="mb-4 text-center" style="display: none;">
+                        <p class="text-muted mb-2">Preview:</p>
+                        <img id="previewImg" class="img-fluid rounded border shadow-sm" style="max-height: 300px;">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg w-100">
+                        <i class="fas fa-magic"></i> Generate Link
+                    </button>
+                </form>
+
+                <!-- Loading -->
+                <div id="loading" class="text-center mt-4" style="display: none;">
+                    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                        <span class="visually-hidden">Generating...</span>
+                    </div>
+                    <p class="mt-3 fw-bold">Generating your shareable link...</p>
+                </div>
+
+                <!-- Success Result -->
+                <div id="result" class="mt-4" style="display: none;">
+                    <div class="alert alert-success">
+                        <h5><i class="fas fa-check-circle"></i> Link Generated Successfully!</h5>
+                    </div>
+                    
+                    <div class="card border-success">
+                        <div class="card-body">
+                            <h6 class="card-title">Your Shareable Link:</h6>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" id="shareableLink" readonly>
+                                <button class="btn btn-success" type="button" id="copyBtn">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                            </div>
+                            
+                            <div class="row text-center mt-3">
+                                <div class="col-md-6">
+                                    <p class="mb-1"><strong>Expires:</strong></p>
+                                    <p id="expiryTime" class="text-muted"></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="mb-1"><strong>Duration:</strong></p>
+                                    <p id="expiryDurationText" class="text-muted"></p>
+                                </div>
+                            </div>
+                            
+                            <div class="text-center mt-3">
+                                <a id="viewLinkBtn" href="#" target="_blank" class="btn btn-outline-primary">
+                                    <i class="fas fa-external-link-alt"></i> View Link
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-secondary w-100 mt-3" id="generateAnotherBtn">
+                        <i class="fas fa-plus"></i> Generate Another Link
+                    </button>
+                </div>
+
+                <!-- Error -->
+                <div id="error" class="alert alert-danger mt-4" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- Features Info -->
+        <div class="row mt-5 g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-primary">
+                    <div class="card-body text-center">
+                        <i class="fas fa-clock fa-3x text-primary mb-3"></i>
+                        <h5 class="card-title">Temporary Links</h5>
+                        <p class="card-text">Links expire automatically after your chosen duration</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-success">
+                    <div class="card-body text-center">
+                        <i class="fas fa-share-alt fa-3x text-success mb-3"></i>
+                        <h5 class="card-title">Easy Sharing</h5>
+                        <p class="card-text">Share images without uploading to social media</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-warning">
+                    <div class="card-body text-center">
+                        <i class="fas fa-shield-alt fa-3x text-warning mb-3"></i>
+                        <h5 class="card-title">Privacy First</h5>
+                        <p class="card-text">Images are automatically deleted after expiration</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Image preview
+document.getElementById('imageInput').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        // Check file size
+        if (file.size > 5 * 1024 * 1024) {
+            alert('Image size must be less than 5MB');
+            this.value = '';
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('previewImg').src = e.target.result;
+            document.getElementById('imagePreview').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// Form submission
+document.getElementById('linkGeneratorForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const loading = document.getElementById('loading');
+    const error = document.getElementById('error');
+    const result = document.getElementById('result');
+    
+    // Hide previous results
+    error.style.display = 'none';
+    result.style.display = 'none';
+    
+    // Show loading
+    loading.style.display = 'block';
+    
+    fetch('{% url "tools:image_link_generator" %}', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        loading.style.display = 'none';
+        
+        if (data.success) {
+            // Show result
+            document.getElementById('shareableLink').value = data.share_url;
+            document.getElementById('expiryTime').textContent = data.expires_at;
+            document.getElementById('viewLinkBtn').href = data.share_url;
+            
+            // Set duration text
+            const durationText = {
+                '1h': '1 Hour',
+                '1d': '1 Day',
+                '7d': '7 Days',
+                '1m': '1 Month'
+            };
+            document.getElementById('expiryDurationText').textContent = durationText[data.expiry_duration];
+            
+            result.style.display = 'block';
+        } else {
+            error.textContent = data.error || 'Failed to generate link';
+            error.style.display = 'block';
+        }
+    })
+    .catch(err => {
+        loading.style.display = 'none';
+        error.textContent = 'Error: ' + err.message;
+        error.style.display = 'block';
+    });
+});
+
+// Copy to clipboard
+document.getElementById('copyBtn').addEventListener('click', function() {
+    const linkInput = document.getElementById('shareableLink');
+    linkInput.select();
+    document.execCommand('copy');
+    
+    // Change button text temporarily
+    const originalText = this.innerHTML;
+    this.innerHTML = '<i class="fas fa-check"></i> Copied!';
+    this.classList.remove('btn-success');
+    this.classList.add('btn-info');
+    
+    setTimeout(() => {
+        this.innerHTML = originalText;
+        this.classList.remove('btn-info');
+        this.classList.add('btn-success');
+    }, 2000);
+});
+
+// Generate another link
+document.getElementById('generateAnotherBtn').addEventListener('click', function() {
+    document.getElementById('result').style.display = 'none';
+    document.getElementById('imagePreview').style.display = 'none';
+    document.getElementById('linkGeneratorForm').reset();
+});
+</script>
+
+<style>
+.card {
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+</style>
+{% endblock %}

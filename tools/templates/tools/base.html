@@ -1,0 +1,153 @@
+<!-- ============================================ -->
+<!-- tools/templates/tools/base.html -->
+<!-- ============================================ -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}PixCraft{% endblock %}</title>
+    
+    <!-- Favicon -->
+    {% load static %}
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E🛠️%3C/text%3E%3C/svg%3E">
+    
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'tools:home' %}">
+                <i class="fas fa-tools"></i> PixCraft
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'tools:home' %}">
+                            <i class="fas fa-home"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'tools:background_remover' %}">
+                            <i class="fas fa-eraser"></i> BG Remover
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'tools:format_converter' %}">
+                            <i class="fas fa-exchange-alt"></i> Format Converter
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'tools:background_changer' %}">
+                            <i class="fas fa-palette"></i> BG Changer
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'tools:qr_generator' %}">
+                            <i class="fas fa-qrcode"></i> QR Generator
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'tools:contact' %}">
+                            <i class="fas fa-envelope"></i> Contact Us
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Premium Trial Announcement Modal -->
+    <div class="modal fade" id="premiumTrialModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-gift"></i> Welcome to PixCraft!
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center py-4">
+                    <div class="mb-3">
+                        <i class="fas fa-star fa-3x text-warning"></i>
+                    </div>
+                    <h4 class="mb-3">🎉 Enjoy Generous FREE Access!</h4>
+                    <p class="lead">All premium features are currently <strong>FREE</strong> with very generous limits!</p>
+                    
+                    <div class="alert alert-success">
+                        <strong>Current FREE Limits:</strong>
+                        <ul class="list-unstyled mt-2 mb-0">
+                            <li>✅ Background Remover: 50 per hour</li>
+                            <li>✅ All Image Tools: 100 per hour</li>
+                            <li>✅ No Watermarks</li>
+                            <li>✅ High-Quality Output</li>
+                        </ul>
+                    </div>
+                    
+                    <p class="text-muted small">
+                        <i class="fas fa-info-circle"></i> In the future, we'll introduce premium plans with even higher limits. 
+                        Enjoy generous free access now!
+                    </p>
+                    <div class="alert alert-info small">
+    By using PixCraft, you agree to our <a href="{% url 'tools:privacy_policy' %}" target="_blank" class="alert-link">Privacy Policy</a>.
+    Your images are encrypted and auto-deleted after expiration.
+</div>
+                    
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-primary btn-lg" data-bs-dismiss="modal">
+                        <i class="fas fa-rocket"></i> Start Using PixCraft
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main class="container my-5">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-dark text-white text-center py-4 mt-5">
+        <div class="container">
+            <p class="mb-2">&copy; 2025 PixCraft. All rights reserved.</p>
+            <p class="mb-0">
+                <a href="{% url 'tools:privacy_policy' %}" class="text-white text-decoration-none">
+                    <i class="fas fa-shield-alt"></i> Privacy Policy
+                </a>
+                <span class="mx-2">|</span>
+                <a href="{% url 'tools:contact' %}" class="text-white text-decoration-none">
+                    <i class="fas fa-envelope"></i> Contact Us
+                </a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/script.js' %}"></script>
+    
+    <!-- Premium Trial Modal Script -->
+    <script>
+        // Show modal only once per session
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if modal was already shown this session
+            if (!sessionStorage.getItem('premiumModalShown')) {
+                // Wait 1 second before showing
+                setTimeout(function() {
+                    var modal = new bootstrap.Modal(document.getElementById('premiumTrialModal'));
+                    modal.show();
+                    
+                    // Mark as shown for this session
+                    sessionStorage.setItem('premiumModalShown', 'true');
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html>
+

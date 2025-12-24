@@ -1,0 +1,122 @@
+{% extends 'tools/base.html' %}
+
+{% block title %}Privacy Policy - PixCraft{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card shadow-lg">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0"><i class="fas fa-shield-alt"></i> Privacy Policy</h3>
+            </div>
+            <div class="card-body">
+                <p class="text-muted"><strong>Last Updated:</strong> December 2025</p>
+                
+                <h4 class="mt-4">1. Information We Collect</h4>
+                <p>When you use PixCraft, we may collect:</p>
+                <ul>
+                    <li>Images you upload for processing</li>
+                    <li>Contact information (name, email) when you contact us</li>
+                    <li>Usage data (IP address, browser type) for security purposes</li>
+                </ul>
+
+                <h4 class="mt-4">2. How We Use Your Information</h4>
+                <p>We use your information solely for:</p>
+                <ul>
+                    <li>Processing your images with our tools</li>
+                    <li>Responding to your inquiries and support requests</li>
+                    <li>Improving our services</li>
+                    <li>Ensuring security and preventing abuse</li>
+                </ul>
+
+                <h4 class="mt-4">3. Image Privacy & Security</h4>
+                <div class="alert alert-success">
+                    <h5><i class="fas fa-lock"></i> Your Images Are Protected</h5>
+                    <ul class="mb-0">
+                        <li><strong>Encrypted Storage:</strong> All uploaded images are stored with encrypted filenames</li>
+                        <li><strong>No Human Access:</strong> We do NOT view, browse, or access your images</li>
+                        <li><strong>Auto-Deletion:</strong> Images are automatically deleted after expiration</li>
+                        <li><strong>Temporary Storage:</strong> Shareable links expire after your chosen duration</li>
+                        <li><strong>Secure Processing:</strong> Images are processed automatically without human intervention</li>
+                    </ul>
+                </div>
+
+                <h4 class="mt-4">4. When We May Access Files</h4>
+                <p>We will ONLY access user files in these exceptional cases:</p>
+                <ul>
+                    <li>Legal requirement (court order, law enforcement request)</li>
+                    <li>Security investigation (suspected illegal content, abuse)</li>
+                    <li>Technical troubleshooting (with your explicit permission)</li>
+                </ul>
+                <p class="text-muted"><em>We will never browse, use, or share your images for any other purpose.</em></p>
+
+                <h4 class="mt-4">5. Data Sharing</h4>
+                <p><strong>We do NOT:</strong></p>
+                <ul>
+                    <li>❌ Sell your data to third parties</li>
+                    <li>❌ Share your images with anyone</li>
+                    <li>❌ Use your images for training or any other purpose</li>
+                    <li>❌ Display your images publicly</li>
+                </ul>
+
+                <h4 class="mt-4">6. Data Retention</h4>
+                <ul>
+                    <li><strong>Temporary Images:</strong> Deleted automatically after link expiration (1 hour to 1 month)</li>
+                    <li><strong>Processed Images:</strong> Deleted immediately after download</li>
+                    <li><strong>Contact Messages:</strong> Retained for customer support purposes</li>
+                </ul>
+
+                <h4 class="mt-4">7. Your Rights</h4>
+                <p>You have the right to:</p>
+                <ul>
+                    <li>Request deletion of your data</li>
+                    <li>Ask what data we have about you</li>
+                    <li>Opt-out of data collection (by not using the service)</li>
+                    <li>Contact us about privacy concerns</li>
+                </ul>
+
+                <h4 class="mt-4">8. Security Measures</h4>
+                <ul>
+                    <li>Encrypted file storage</li>
+                    <li>Rate limiting to prevent abuse</li>
+                    <li>File validation and sanitization</li>
+                    <li>Secure HTTPS connection (in production)</li>
+                    <li>Regular security updates</li>
+                </ul>
+
+                <h4 class="mt-4">9. Cookies</h4>
+                <p>We use essential cookies for:</p>
+                <ul>
+                    <li>Session management</li>
+                    <li>Security (CSRF protection)</li>
+                    <li>Rate limiting</li>
+                </ul>
+                <p>We do NOT use tracking or advertising cookies.</p>
+
+                <h4 class="mt-4">10. Children's Privacy</h4>
+                <p>PixCraft is not intended for users under 13 years old. We do not knowingly collect data from children.</p>
+
+                <h4 class="mt-4">11. Changes to This Policy</h4>
+                <p>We may update this privacy policy. Changes will be posted on this page with an updated "Last Updated" date.</p>
+
+                <h4 class="mt-4">12. Contact Us</h4>
+                <p>If you have questions about this privacy policy or your data:</p>
+                <ul>
+                    <li><strong>Email:</strong> Contact us through our <a href="{% url 'tools:contact' %}">Contact Form</a></li>
+                </ul>
+
+                <div class="alert alert-info mt-4">
+                    <h5><i class="fas fa-info-circle"></i> Our Commitment</h5>
+                    <p class="mb-0">At PixCraft, we respect your privacy. Your images are yours alone. We're here to provide tools, not to access your personal content. Your trust is our priority.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="{% url 'tools:home' %}" class="btn btn-primary">
+                <i class="fas fa-home"></i> Back to Home
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

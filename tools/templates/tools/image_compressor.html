@@ -1,0 +1,126 @@
+<!-- tools/templates/tools/image_compressor.html -->
+<!-- ============================================ -->
+{% extends 'tools/base.html' %}
+
+{% block title %}Image Compressor - Pixcraft{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white">
+                <h3 class="mb-0"><i class="fas fa-compress"></i> Image Compressor</h3>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">Reduce image file size while maintaining quality</p>
+                
+                <form id="compressForm" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label for="imageInput" class="form-label">Select Image</label>
+                        <input type="file" class="form-control" id="imageInput" name="image" accept="image/*" required>
+                        <div class="invalid-feedback">Please select an image file.</div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="qualityRange" class="form-label">Quality: <span id="qualityValue">75</span>%</label>
+                        <input type="range" class="form-range" id="qualityRange" name="quality" min="10" max="100" value="75">
+                        <small class="text-muted">Lower quality = smaller file size</small>
+                    </div>
+                    
+                    <div id="preview" class="mb-3 text-center" style="display: none;">
+                        <img id="previewImg" class="img-fluid rounded" style="max-height: 300px;">
+                        <p class="mt-2 text-muted">Original size: <span id="originalSize"></span></p>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success btn-lg w-100">
+                        <i class="fas fa-compress"></i> Compress Image
+                    </button>
+                </form>
+                
+                <div id="loading" class="text-center mt-3" style="display: none;">
+                    <div class="spinner-border text-success" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Compressing...</p>
+                </div>
+                
+                <div id="result" class="alert alert-success mt-3" style="display: none;"></div>
+                <div id="error" class="alert alert-danger mt-3" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('qualityRange').addEventListener('input', function(e) {
+    document.getElementById('qualityValue').textContent = e.target.value;
+});
+
+document.getElementById('imageInput').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('previewImg').src = e.target.result;
+            document.getElementById('originalSize').textContent = (file.size / 1024).toFixed(2) + ' KB';
+            document.getElementById('preview').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+document.getElementById('compressForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const form = e.target;
+    if (!form.checkValidity()) {
+        form.classList.add('was-validated');
+        return;
+    }
+    
+    const formData = new FormData(form);
+    document.getElementById('loading').style.display = 'block';
+    document.getElementById('error').style.display = 'none';
+    document.getElementById('result').style.display = 'none';
+    
+    fetch('{% url "tools:image_compressor" %}', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        const originalSize = response.headers.get('X-Original-Size');
+        const compressedSize = response.headers.get('X-Compressed-Size');
+        
+        if (!response.ok) throw new Error('Compression failed');
+        
+        return response.blob().then(blob => ({blob, originalSize, compressedSize}));
+    })
+    .then(({blob, originalSize, compressedSize}) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'compressed.jpg';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        
+        document.getElementById('loading').style.display = 'none';
+        
+        const reduction = ((1 - compressedSize / originalSize) * 100).toFixed(1);
+        document.getElementById('result').innerHTML = `
+            <strong>Compression Complete!</strong><br>
+            Original: ${(originalSize / 1024).toFixed(2)} KB<br>
+            Compressed: ${(compressedSize / 1024).toFixed(2)} KB<br>
+            Reduced by: ${reduction}%
+        `;
+        document.getElementById('result').style.display = 'block';
+    })
+    .catch(error => {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('error').textContent = 'Error: ' + error.message;
+        document.getElementById('error').style.display = 'block';
+    });
+});
+</script>
+{% endblock %}

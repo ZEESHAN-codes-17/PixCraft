@@ -1,0 +1,36 @@
+# Core Django
+Django>=4.2.0
+
+# Image Processing
+Pillow>=10.0.0
+
+# QR Code Generation
+qrcode>=7.4.2
+
+# PDF Generation
+reportlab>=4.0.0
+
+# PDF to Images Conversion (for format converter)
+pdf2image>=1.16.3
+# Note: pdf2image also requires poppler-utils installed on system
+# Ubuntu/Debian: sudo apt-get install poppler-utils
+# macOS: brew install poppler
+# Windows: Download from https://github.com/oschwartz10612/poppler-windows/releases/
+
+# Video to Audio Conversion (for format converter)
+moviepy>=1.0.3
+# Note: moviepy requires ffmpeg installed on system
+# Ubuntu/Debian: sudo apt-get install ffmpeg
+# macOS: brew install ffmpeg
+# Windows: Download from https://ffmpeg.org/download.html
+
+# Additional dependencies for various features
+numpy>=1.24.0
+
+# Optional: For text to handwriting (if you decide to fix it later)
+# python-docx>=0.8.11
+# openpyxl>=3.1.0
+# PyPDF2>=3.0.0
+
+# Optional: For background removal (if rembg is used)
+# rembg>=2.0.50

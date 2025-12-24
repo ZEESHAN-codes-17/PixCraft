@@ -1,0 +1,140 @@
+{% extends 'tools/base.html' %}
+
+{% block title %}Home - PixCraft{% endblock %}
+
+{% block content %}
+<div class="text-center mb-5">
+    <h1 class="display-4 mb-3">Welcome to PixCraft</h1>
+    <p class="lead text-muted">Powerful image processing tools, all in one place</p>
+</div>
+
+<!-- FIRST ROW - 4 FEATURES -->
+<div class="row g-4">
+    <div class="col-md-6 col-lg-3">
+        <div class="card tool-card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <div class="tool-icon mb-3">
+                    <i class="fas fa-file-pdf fa-3x text-danger"></i>
+                </div>
+                <h5 class="card-title">Image to PDF</h5>
+                <p class="card-text text-muted">Convert any image to PDF format instantly</p>
+                <a href="{% url 'tools:image_to_pdf' %}" class="btn btn-primary">Use Tool</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+        <div class="card tool-card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <div class="tool-icon mb-3">
+                    <i class="fas fa-exchange-alt fa-3x text-primary"></i>
+                </div>
+                <h5 class="card-title">Format Converter</h5>
+                <p class="card-text text-muted">Convert images between different formats</p>
+                <a href="{% url 'tools:format_converter' %}" class="btn btn-primary">Use Tool</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+        <div class="card tool-card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <div class="tool-icon mb-3">
+                    <i class="fas fa-compress fa-3x text-success"></i>
+                </div>
+                <h5 class="card-title">Image Compressor</h5>
+                <p class="card-text text-muted">Reduce image file size while maintaining quality</p>
+                <a href="{% url 'tools:image_compressor' %}" class="btn btn-primary">Use Tool</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+        <div class="card tool-card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <div class="tool-icon mb-3">
+                    <i class="fas fa-qrcode fa-3x text-warning"></i>
+                </div>
+                <h5 class="card-title">QR Code Generator</h5>
+                <p class="card-text text-muted">Create custom QR codes for any text or URL</p>
+                <a href="{% url 'tools:qr_generator' %}" class="btn btn-primary">Use Tool</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SECOND ROW - 4 FEATURES -->
+<div class="row g-4 mt-2">
+    <div class="col-md-6 col-lg-3">
+        <div class="card tool-card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <div class="tool-icon mb-3">
+                    <i class="fas fa-link fa-3x text-info"></i>
+                </div>
+                <h5 class="card-title">Image Link Generator</h5>
+                <p class="card-text text-muted">Create temporary shareable links for images</p>
+                <a href="{% url 'tools:image_link_generator' %}" class="btn btn-primary">Use Tool</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+        <div class="card tool-card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <div class="tool-icon mb-3">
+                    <i class="fas fa-eraser fa-3x text-danger"></i>
+                </div>
+                <h5 class="card-title">Background Remover</h5>
+                <p class="card-text text-muted">Remove image backgrounds - 100% FREE!</p>
+                <a href="{% url 'tools:background_remover' %}" class="btn btn-primary">Use Tool</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+        <div class="card tool-card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <div class="tool-icon mb-3">
+                    <i class="fas fa-id-card fa-3x text-success"></i>
+                </div>
+                <h5 class="card-title">ID Photo Resizer</h5>
+                <p class="card-text text-muted">Resize photos to standard ID/passport dimensions</p>
+                <a href="{% url 'tools:id_photo_resizer' %}" class="btn btn-primary">Use Tool</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+        <div class="card tool-card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <div class="tool-icon mb-3">
+                    <i class="fas fa-palette fa-3x text-warning"></i>
+                </div>
+                <h5 class="card-title">Background Changer</h5>
+                <p class="card-text text-muted">Change ID/photo background color instantly</p>
+                <a href="{% url 'tools:background_changer' %}" class="btn btn-primary">Use Tool</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-lg-8 mx-auto">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h3 class="card-title mb-3">Features</h3>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Convert any image to PDF.</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Image format converter (PNG, JPG, WEBP, etc).</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Image compression for smaller file sizes.</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Generate custom QR codes.</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Create temporary shareable image links.</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Remove image backgrounds for FREE.</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Resize photos to ID/passport dimensions.</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Change photo background colors.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

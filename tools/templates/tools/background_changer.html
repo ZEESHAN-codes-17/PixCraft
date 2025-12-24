@@ -1,0 +1,259 @@
+{% extends 'tools/base.html' %}
+
+{% block title %}Background Changer - PixCraft{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-lg">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">
+                    <i class="fas fa-palette"></i> Background Changer
+                </h3>
+            </div>
+            <div class="card-body">
+                <form id="backgroundChangerForm" method="POST" enctype="multipart/form-data" class="needs-validation">
+                    {% csrf_token %}
+                    
+                    <!-- Upload Photo -->
+                    <div class="mb-4">
+                        <label for="photoImage" class="form-label fw-bold">Upload Photo</label>
+                        <input 
+                            type="file" 
+                            class="form-control" 
+                            id="photoImage" 
+                            name="image" 
+                            accept="image/*"
+                            required
+                        >
+                        <small class="text-muted d-block mt-2">Upload a photo with a background you want to change</small>
+                    </div>
+
+                    <!-- Mode Selection -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Select Mode</label>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="mode" id="modeAuto" value="auto" checked>
+                            <label class="form-check-label" for="modeAuto">
+                                <strong>Auto Mode</strong> - Automatic background detection (recommended)
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="mode" id="modeManual" value="manual">
+                            <label class="form-check-label" for="modeManual">
+                                <strong>Manual Mode</strong> - Adjust sensitivity for color-based removal
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Manual Mode Options (Hidden by default) -->
+                    <div id="manualOptions" style="display: none;" class="mb-4 p-3 bg-light rounded">
+                        <label for="tolerance" class="form-label fw-bold">Sensitivity (Tolerance)</label>
+                        <input 
+                            type="range" 
+                            class="form-range" 
+                            id="tolerance" 
+                            name="tolerance" 
+                            min="5" 
+                            max="100" 
+                            value="30"
+                        >
+                        <div class="d-flex justify-content-between mt-2">
+                            <small class="text-muted">5 (Strict)</small>
+                            <small class="text-muted" id="toleranceValue">30</small>
+                            <small class="text-muted">100 (Loose)</small>
+                        </div>
+                        <small class="text-muted d-block mt-2">Lower values = only exact background colors change. Higher values = more colors change.</small>
+                    </div>
+
+                    <!-- Color Selection -->
+                    <div class="mb-4">
+                        <label for="bgColor" class="form-label fw-bold">Select New Background Color</label>
+                        <div class="input-group">
+                            <input 
+                                type="color" 
+                                class="form-control form-control-color" 
+                                id="bgColor" 
+                                name="bg_color" 
+                                value="#ffffff"
+                                style="height: 50px;"
+                            >
+                            <span class="input-group-text">
+                                <span id="colorCode">#ffffff</span>
+                            </span>
+                        </div>
+                        <small class="text-muted d-block mt-2">Click to choose your desired background color</small>
+                    </div>
+
+                    <!-- Quick Color Options -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Quick Color Options</label>
+                        <div class="d-grid gap-2">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-outline-dark quick-color" data-color="#ffffff" title="White">
+                                    <i class="fas fa-square" style="color: white; text-shadow: 0 0 2px black;"></i> White
+                                </button>
+                                <button type="button" class="btn btn-outline-dark quick-color" data-color="#000000" title="Black">
+                                    <i class="fas fa-square" style="color: black;"></i> Black
+                                </button>
+                                <button type="button" class="btn btn-outline-dark quick-color" data-color="#ff0000" title="Red">
+                                    <i class="fas fa-square" style="color: red;"></i> Red
+                                </button>
+                                <button type="button" class="btn btn-outline-dark quick-color" data-color="#0000ff" title="Blue">
+                                    <i class="fas fa-square" style="color: blue;"></i> Blue
+                                </button>
+                            </div>
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-outline-dark quick-color" data-color="#00ff00" title="Green">
+                                    <i class="fas fa-square" style="color: green;"></i> Green
+                                </button>
+                                <button type="button" class="btn btn-outline-dark quick-color" data-color="#ffff00" title="Yellow">
+                                    <i class="fas fa-square" style="color: gold;"></i> Yellow
+                                </button>
+                                <button type="button" class="btn btn-outline-dark quick-color" data-color="#ff00ff" title="Magenta">
+                                    <i class="fas fa-square" style="color: magenta;"></i> Magenta
+                                </button>
+                                <button type="button" class="btn btn-outline-dark quick-color" data-color="#00ffff" title="Cyan">
+                                    <i class="fas fa-square" style="color: cyan;"></i> Cyan
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg w-100">
+                        <i class="fas fa-magic"></i> Change Background
+                    </button>
+                </form>
+
+                <div id="loadingSpinner" class="text-center mt-4" style="display: none;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Changing background...</p>
+                </div>
+
+                <div id="successMessage" class="alert alert-success alert-dismissible fade show mt-4" role="alert" style="display: none;">
+                    <i class="fas fa-check-circle"></i> <strong>Success!</strong> Background changed successfully!
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <div id="downloadSection" style="display: none;" class="mt-4 text-center">
+                    <a id="downloadBtn" href="#" class="btn btn-success btn-lg" download="photo_new_background.png">
+                        <i class="fas fa-download"></i> Download Photo
+                    </a>
+                    <button type="button" class="btn btn-secondary btn-lg ms-2" onclick="location.reload()">
+                        <i class="fas fa-redo"></i> Change Another
+                    </button>
+                </div>
+
+                <div id="errorAlert" class="alert alert-danger alert-dismissible fade show mt-4" role="alert" style="display: none;">
+                    <strong>Error:</strong> <span id="errorMessage"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <div class="mt-5 p-4 bg-light rounded">
+                    <h5 class="mb-3"><i class="fas fa-info-circle text-info"></i> How to Use:</h5>
+                    <ol class="mb-0">
+                        <li class="mb-2"><strong>Upload Photo:</strong> Choose a photo with background to change</li>
+                        <li class="mb-2"><strong>Select Mode:</strong>
+                            <ul class="mt-1">
+                                <li><strong>Auto Mode:</strong> Best for clear subject separation. Automatically detects and removes background.</li>
+                                <li><strong>Manual Mode:</strong> Better for photos with uniform background colors. Adjust sensitivity slider.</li>
+                            </ul>
+                        </li>
+                        <li class="mb-2"><strong>Choose Color:</strong> Pick new background color or use quick options</li>
+                        <li class="mb-2"><strong>Download:</strong> Get your photo with new background</li>
+                    </ol>
+                    <p class="mt-3 mb-0"><small class="text-muted"><strong>Tips:</strong> Auto mode works best for ID photos and portraits. Manual mode works best with plain, uniform backgrounds.</small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Show/hide manual options based on mode selection
+document.getElementById('modeAuto').addEventListener('change', function() {
+    if (this.checked) {
+        document.getElementById('manualOptions').style.display = 'none';
+    }
+});
+
+document.getElementById('modeManual').addEventListener('change', function() {
+    if (this.checked) {
+        document.getElementById('manualOptions').style.display = 'block';
+    }
+});
+
+// Update tolerance value display
+document.getElementById('tolerance').addEventListener('input', function() {
+    document.getElementById('toleranceValue').textContent = this.value;
+});
+
+// Update color code display
+document.getElementById('bgColor').addEventListener('input', function() {
+    document.getElementById('colorCode').textContent = this.value.toUpperCase();
+});
+
+// Quick color buttons
+document.querySelectorAll('.quick-color').forEach(button => {
+    button.addEventListener('click', function(e) {
+        e.preventDefault();
+        const color = this.getAttribute('data-color');
+        document.getElementById('bgColor').value = color;
+        document.getElementById('colorCode').textContent = color.toUpperCase();
+    });
+});
+
+// Form submission
+document.getElementById('backgroundChangerForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const photoImage = document.getElementById('photoImage').files[0];
+    
+    if (!photoImage) {
+        showError('Please upload a photo');
+        return;
+    }
+    
+    document.getElementById('loadingSpinner').style.display = 'block';
+    document.getElementById('successMessage').style.display = 'none';
+    document.getElementById('errorAlert').style.display = 'none';
+    document.getElementById('downloadSection').style.display = 'none';
+    
+    const formData = new FormData(this);
+    
+    fetch('{% url "tools:background_changer" %}', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(data => {
+                throw new Error(data.error || 'Processing failed');
+            });
+        }
+        return response.blob();
+    })
+    .then(blob => {
+        const url = URL.createObjectURL(blob);
+        document.getElementById('downloadBtn').href = url;
+        
+        document.getElementById('loadingSpinner').style.display = 'none';
+        document.getElementById('successMessage').style.display = 'block';
+        document.getElementById('downloadSection').style.display = 'block';
+        
+        showToast('Background changed successfully!', 'success');
+    })
+    .catch(error => {
+        document.getElementById('loadingSpinner').style.display = 'none';
+        showError(error.message || 'An error occurred');
+    });
+});
+
+function showError(message) {
+    document.getElementById('errorMessage').textContent = message;
+    document.getElementById('errorAlert').style.display = 'block';
+}
+</script>
+{% endblock %}

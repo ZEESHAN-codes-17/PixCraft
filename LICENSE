@@ -1,0 +1,95 @@
+MIT License with Additional Terms
+
+Copyright (c) 2025 Zeeshan Ali
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to use,
+study, and learn from the Software, subject to the following conditions:
+
+ALLOWED USES:
+✅ Personal use and learning
+✅ Educational purposes
+✅ Portfolio projects (with attribution)
+✅ Code snippets and learning
+✅ Modified versions for personal projects
+✅ Building competing services with substantial modifications
+
+PROHIBITED USES:
+❌ Direct deployment of unmodified code as a competing service
+❌ Use of "PixCraft" name, logo, or branding
+❌ Deployment of identical or substantially similar service
+❌ Commercial hosting without significant modifications and differentiation
+❌ Removal of copyright notices or author attribution
+
+REQUIREMENTS:
+1. Any public deployment MUST include substantial creative changes
+2. Any public deployment MUST use different branding/name
+3. Any public deployment MUST credit original author (Zeeshan Ali)
+4. Any derivative work MUST be clearly differentiated from PixCraft
+5. Attribution required in documentation: "Based on PixCraft by Zeeshan Ali"
+   or "Inspired by PixCraft (github.com/yourusername/pixcraft)"
+
+SUBSTANTIAL MODIFICATIONS means:
+- Different UI/UX design and user experience
+- Additional or different feature set
+- Unique branding and visual identity
+- Not a direct clone or copy-paste deployment
+- Clear evidence of independent creative work
+
+EXAMPLES:
+
+✅ ALLOWED:
+- Study the code and learn Django/image processing techniques
+- Use security patterns in your own unrelated projects
+- Build "ImageMagic" with unique features and design
+- Create educational tutorials referencing this project
+- Fork for portfolio with clear attribution
+
+❌ NOT ALLOWED:
+- Clone and deploy as "PixCraft Pro" or similar
+- Deploy identical site with just color changes
+- Use PixCraft branding or pretend it's your work
+- Commercial deployment without substantial changes
+- Remove this license or copyright notices
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software, along with clear attribution
+to the original author.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+COMPETITION CLAUSE:
+
+The author welcomes healthy competition and innovation in the image processing
+space. You are encouraged to build better, more innovative solutions. However,
+direct cloning without creative input undermines the open-source spirit and is
+not permitted under this license.
+
+If you build something inspired by this project, the author would love to see it!
+Feel free to reach out and share your work.
+
+---
+
+For questions about licensing, commercial use, or collaboration:
+Email: zeeshanali4k2517@gmail.com
+GitHub: @yourusername
+
+If you build something cool with this code, let me know! I'd love to see it! 🚀
+
+---
+
+SUMMARY:
+- Learn from it? ✅ YES
+- Use code snippets? ✅ YES  
+- Build your own competing service? ✅ YES (with your own creativity)
+- Deploy identical clone? ❌ NO
+- Use PixCraft name/branding? ❌ NO
+- Remove attribution? ❌ NO
