@@ -1,3 +1,4 @@
+
 """
 Django settings for image_tools_project project.
 
@@ -25,6 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-local-dev-key')
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+# ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
 ALLOWED_HOSTS = ['*']
 # cast=lambda v: [s.strip() for s in v.split(',')]
 
@@ -198,3 +200,10 @@ CACHES = {
 # Static files for production
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# CSRF Settings for Production
+CSRF_TRUSTED_ORIGINS = [
+    'https://pixcraft-production.up.railway.app',  # Your Railway URL
+]
+
+# CORS Settings (if needed)
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None
