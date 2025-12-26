@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
-
+from django.conf import settings
+from django.conf.urls.static import static
 app_name = 'tools'
 
 urlpatterns = [
@@ -15,5 +16,8 @@ urlpatterns = [
     path('id-photo-resizer/', views.id_photo_resizer, name='id_photo_resizer'),
     path('background-changer/', views.background_changer, name='background_changer'),
     path('contact/', views.contact, name='contact'),
-    path('privacy/', views.privacy_policy, name='privacy_policy'),  # NEW: Privacy Policy
+    path('privacy/', views.privacy_policy, name='privacy_policy'), # NEW: Privacy Policy
 ]
+# Serve media files in production
+if settings.DEBUG or True:  # Always serve on Railway
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
